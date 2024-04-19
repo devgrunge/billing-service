@@ -15,11 +15,7 @@ export class AppController {
   }
 
   @Get('/payment')
-  helloStripe(): { apiKey: string; secretKey: string } {
-    console.log('stripe fn ==> ', this.stripeService.helloStripe());
-    return {
-      apiKey: this.stripeService.apiKey,
-      secretKey: this.stripeService.appSecret,
-    };
+  helloStripe(): string {
+    return 'Payment gateway should be here';
   }
 }
