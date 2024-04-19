@@ -13,9 +13,4 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
-
-  @Get('/payment')
-  helloStripe(): string {
-    return 'Payment gateway should be here';
-  }
 }
