@@ -11,19 +11,18 @@ export class StripeSubscriptionController {
     @Req() request,
     @Body() priceId: string,
   ): Promise<Stripe.Response<Stripe.Checkout.Session> | undefined> {
-    return this.subscriptionService.createSubscriptionSession(
+    const subscription = this.subscriptionService.createSubscriptionSession(
       request.user,
       priceId,
-    );
+    ); // should save it on the db
+    console.log(subscription.then((data) => data));
+    return subscription;
   }
 
   @Post('portal-session')
   updatePlan(
     @Req() request,
-    @Body()
-    customerId: string /* Should be removed, the customer id must be taken from the request */,
   ): Promise<Stripe.Response<Stripe.BillingPortal.Session>> {
-    console.log('entrei aqui ==> ', customerId);
     return this.subscriptionService.getPortal(request.user.customerId);
   }
 }

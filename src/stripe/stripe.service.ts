@@ -17,7 +17,7 @@ export class StripeService {
         // retrieve success link here: https://dashboard.stripe.com/test/settings/billing/portal
         success_url:
           'https://billing.stripe.com/p/login/test_4gw3cI3K0gAE6wo5kk',
-        customer: user.customerId, // it should come from a real user
+        customer: user.customerId, // it should come from a real
         line_items: [
           {
             price: priceId,
