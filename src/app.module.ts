@@ -8,7 +8,7 @@ import { StripeSubscriptionController } from './stripe/stripe.controller';
 import { SubscriptionModule } from './stripe/stripe.module';
 import configs from './config';
 import { StripeModule } from '@golevelup/nestjs-stripe';
-import { UserService } from './user-service/user-service.service';
+
 @Module({
   imports: [
     SubscriptionModule,
@@ -24,6 +24,6 @@ import { UserService } from './user-service/user-service.service';
     }),
   ],
   controllers: [AppController, StripeSubscriptionController],
-  providers: [AppService, StripeService, SubscriptionWebhookService, UserService],
+  providers: [AppService, StripeService, SubscriptionWebhookService],
 })
 export class AppModule {}

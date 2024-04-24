@@ -10,6 +10,14 @@ export class StripeService {
     this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
   }
 
+  public async getPortal(
+    customerId: string,
+  ): Promise<Stripe.Response<Stripe.BillingPortal.Session>> {
+    return this.stripe.billingPortal.sessions.create({
+      customer: customerId,
+    });
+  }
+
   public async createSubscriptionSession(
     user: CustomerMock /* Create mock interface for the user object */,
     priceId: string,
@@ -34,19 +42,43 @@ export class StripeService {
     }
   }
 
-  public async customerCreate(
-    createCustomerDto: CustomerMock,
-  ): Promise<string> {
-    const customer = await this.stripe.customers.create(createCustomerDto);
-
-    return customer.id;
+  /* 
+  Gets a unique subscription based on the id passed as param
+  @Param subscription_id
+  @Param metadata : Set of key-value pairs that you can attach to an object. 
+  This can be useful for storing additional information about the object in a structured format. 
+  Individual keys can be unset by posting an empty value to them. 
+  All keys can be unset by posting an empty value to metadata.
+  */
+  public async updateSubscription(subscription_id: string, order_id?: string) {
+    try {
+      return this.stripe.subscriptions.update(subscription_id, {
+        metadata: {
+          order_id: order_id,
+        },
+      });
+    } catch (error) {
+      console.error('Error from stripe: ', error);
+    }
   }
 
-  public async getPortal(
-    customerId: string,
-  ): Promise<Stripe.Response<Stripe.BillingPortal.Session>> {
-    return this.stripe.billingPortal.sessions.create({
-      customer: customerId,
-    });
+  /* 
+  Gets a unique subscription based on the id passed as param
+  @Param subscription_id
+  */
+  public async getSubscription(subscription_id: string) {
+    try {
+      return this.stripe.subscriptions.retrieve(subscription_id);
+    } catch (error) {
+      console.error('Error from stripe: ', error);
+    }
+  }
+
+  public async deleteSubscription(subscription_id: string) {
+    try {
+      return this.stripe.subscriptions.cancel(subscription_id);
+    } catch (error) {
+      console.error('Error from stripe :', error);
+    }
   }
 }

@@ -1,14 +1,10 @@
-import { Body, Controller, Post, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Post, Req } from '@nestjs/common';
 import { StripeService } from './stripe.service';
-import { UserService } from 'src/user-service/user-service.service';
 import Stripe from 'stripe';
 
 @Controller('payment')
 export class StripeSubscriptionController {
-  constructor(
-    private subscriptionService: StripeService,
-    private UserService: UserService,
-  ) {}
+  constructor(private subscriptionService: StripeService) {}
 
   @Post('subscribe')
   createSubscriptionSession(
@@ -23,10 +19,27 @@ export class StripeSubscriptionController {
     return subscription;
   }
 
+  @Post('edit-subscription')
+  updateSubscription(
+    @Body() subscription_id: string,
+    order_id?: string,
+  ): Promise<Stripe.Response<Stripe.Checkout.Session> | undefined> {
+    const subscription = this.updateSubscription(subscription_id, order_id);
+
+    return subscription;
+  }
+
   @Post('portal-session')
   updatePlan(
     @Req() request,
   ): Promise<Stripe.Response<Stripe.BillingPortal.Session>> {
     return this.subscriptionService.getPortal('cus_PyiGqH6K26YOMn');
+  }
+
+  @Delete('cancel-subscription')
+  deleteSubscription(
+    @Body() subscription_id: string,
+  ): Promise<Stripe.Response<Stripe.Checkout.Session | undefined>> {
+    return this.deleteSubscription(subscription_id);
   }
 }
