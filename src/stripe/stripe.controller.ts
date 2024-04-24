@@ -32,8 +32,9 @@ export class StripeSubscriptionController {
   @Post('portal-session')
   updatePlan(
     @Req() request,
+    @Body() customer_id: string,
   ): Promise<Stripe.Response<Stripe.BillingPortal.Session>> {
-    return this.subscriptionService.getPortal('cus_PyiGqH6K26YOMn');
+    return this.subscriptionService.getPortal(customer_id);
   }
 
   @Delete('cancel-subscription')

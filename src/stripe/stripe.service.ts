@@ -10,11 +10,15 @@ export class StripeService {
     this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
   }
 
+  /* 
+  Creates a session of the customer portal.
+  @Param customer: The ID of an existing customer 
+  */
   public async getPortal(
-    customerId: string,
+    customer: string,
   ): Promise<Stripe.Response<Stripe.BillingPortal.Session>> {
     return this.stripe.billingPortal.sessions.create({
-      customer: customerId,
+      customer: customer,
     });
   }
 
@@ -22,13 +26,12 @@ export class StripeService {
     user: CustomerMock /* Create mock interface for the user object */,
     priceId: string,
   ): Promise<Stripe.Response<Stripe.Checkout.Session> | undefined> {
-    console.log('user ==>', user);
     try {
       return this.stripe.checkout.sessions.create({
         // retrieve success link here: https://dashboard.stripe.com/test/settings/billing/portal
         success_url:
           'https://billing.stripe.com/p/login/test_4gw3cI3K0gAE6wo5kk',
-        customer: 'cus_PyiGqH6K26YOMn' || user.customerId, // it should come from a real
+        customer: 'cus_PyiGqH6K26YOMn' || user.customerId, // it should come from a real customer ID
         line_items: [
           {
             price: priceId,
@@ -38,7 +41,7 @@ export class StripeService {
         mode: 'subscription',
       });
     } catch (error) {
-      console.error('Error from stripe:', error);
+      console.error('Error from stripe ', error);
     }
   }
 
