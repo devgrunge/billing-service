@@ -6,18 +6,21 @@ import Stripe from 'stripe';
 @Injectable()
 export class StripeService {
   public customerService: object;
-  constructor(@InjectStripeClient() private stripe: Stripe) {}
+  constructor(@InjectStripeClient() private stripe: Stripe) {
+    this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+  }
 
   public async createSubscriptionSession(
     user: CustomerMock /* Create mock interface for the user object */,
     priceId: string,
   ): Promise<Stripe.Response<Stripe.Checkout.Session> | undefined> {
+    console.log('user ==>', user);
     try {
       return this.stripe.checkout.sessions.create({
         // retrieve success link here: https://dashboard.stripe.com/test/settings/billing/portal
         success_url:
           'https://billing.stripe.com/p/login/test_4gw3cI3K0gAE6wo5kk',
-        customer: user.customerId, // it should come from a real
+        customer: 'cus_PyiGqH6K26YOMn' || user.customerId, // it should come from a real
         line_items: [
           {
             price: priceId,

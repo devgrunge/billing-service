@@ -4,6 +4,7 @@ import { StripeService } from './stripe.service';
 import { StripeModule } from '@golevelup/nestjs-stripe';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SubscriptionWebhookService } from './stripe-webhook.service';
+import { UserService } from 'src/user-service/user-service.service';
 
 @Module({
   imports: [
@@ -15,6 +16,6 @@ import { SubscriptionWebhookService } from './stripe-webhook.service';
     }),
   ],
   controllers: [StripeSubscriptionController],
-  providers: [StripeService, SubscriptionWebhookService],
+  providers: [StripeService, SubscriptionWebhookService, UserService],
 })
 export class SubscriptionModule {}

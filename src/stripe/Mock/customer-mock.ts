@@ -10,7 +10,7 @@ export class CustomerMock {
   stripe: any;
 
   public constructor(customerId: string, name: string) {
-    this.customerId = customerId;
+    this.customerId = 'cus_PyiGqH6K26YOMn';
     this.name = name;
   }
 }

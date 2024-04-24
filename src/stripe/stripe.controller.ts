@@ -1,10 +1,14 @@
 import { Body, Controller, Post, Req } from '@nestjs/common';
 import { StripeService } from './stripe.service';
+import { UserService } from 'src/user-service/user-service.service';
 import Stripe from 'stripe';
 
-@Controller('stripe')
+@Controller('payment')
 export class StripeSubscriptionController {
-  constructor(private subscriptionService: StripeService) {}
+  constructor(
+    private subscriptionService: StripeService,
+    private UserService: UserService,
+  ) {}
 
   @Post('subscribe')
   createSubscriptionSession(
@@ -23,6 +27,6 @@ export class StripeSubscriptionController {
   updatePlan(
     @Req() request,
   ): Promise<Stripe.Response<Stripe.BillingPortal.Session>> {
-    return this.subscriptionService.getPortal(request.user.customerId);
+    return this.subscriptionService.getPortal('cus_PyiGqH6K26YOMn');
   }
 }
