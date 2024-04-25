@@ -7,16 +7,18 @@ export class StripeSubscriptionController {
   constructor(private subscriptionService: StripeService) {}
 
   @Post('subscribe')
-  createSubscriptionSession(
+  createSubscription(
     @Req() request,
     @Body() priceId: string,
   ): Promise<Stripe.Response<Stripe.Checkout.Session> | undefined> {
-    const subscription = this.subscriptionService.createSubscriptionSession(
-      request.user,
-      priceId,
-    ); // should save it on the db
-    console.log(subscription.then((data) => data));
-    return subscription;
+    return this.subscriptionService.createSubscription(request.user, priceId);
+  }
+
+  @Post('portal-session')
+  getPortal(
+    @Body() customer: string,
+  ): Promise<Stripe.Response<Stripe.BillingPortal.Session>> {
+    return this.subscriptionService.getPortal(customer);
   }
 
   @Post('edit-subscription')
@@ -27,14 +29,6 @@ export class StripeSubscriptionController {
     const subscription = this.updateSubscription(subscription_id, order_id);
 
     return subscription;
-  }
-
-  @Post('portal-session')
-  updatePlan(
-    @Req() request,
-    @Body() customer_id: string,
-  ): Promise<Stripe.Response<Stripe.BillingPortal.Session>> {
-    return this.subscriptionService.getPortal(customer_id);
   }
 
   @Delete('cancel-subscription')

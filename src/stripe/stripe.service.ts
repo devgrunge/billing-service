@@ -17,21 +17,25 @@ export class StripeService {
   public async getPortal(
     customer: string,
   ): Promise<Stripe.Response<Stripe.BillingPortal.Session>> {
-    return this.stripe.billingPortal.sessions.create({
-      customer: customer,
-    });
+    try {
+      return await this.stripe.billingPortal.sessions.create({
+        customer,
+      });
+    } catch (error) {
+      console.error('Error from stripe ', error);
+    }
   }
 
-  public async createSubscriptionSession(
+  public async createSubscription(
     user: CustomerMock /* Create mock interface for the user object */,
     priceId: string,
   ): Promise<Stripe.Response<Stripe.Checkout.Session> | undefined> {
     try {
-      return this.stripe.checkout.sessions.create({
+      return await this.stripe.checkout.sessions.create({
         // retrieve success link here: https://dashboard.stripe.com/test/settings/billing/portal
         success_url:
           'https://billing.stripe.com/p/login/test_4gw3cI3K0gAE6wo5kk',
-        customer: 'cus_PyiGqH6K26YOMn' || user.customerId, // it should come from a real customer ID
+        customer: 'cus_PyiGqH6K26YOMn', // || user.customerId, // it should come from a real customer ID
         line_items: [
           {
             price: priceId,
@@ -55,7 +59,7 @@ export class StripeService {
   */
   public async updateSubscription(subscription_id: string, order_id?: string) {
     try {
-      return this.stripe.subscriptions.update(subscription_id, {
+      return await this.stripe.subscriptions.update(subscription_id, {
         metadata: {
           order_id: order_id,
         },
@@ -71,7 +75,7 @@ export class StripeService {
   */
   public async getSubscription(subscription_id: string) {
     try {
-      return this.stripe.subscriptions.retrieve(subscription_id);
+      return await this.stripe.subscriptions.retrieve(subscription_id);
     } catch (error) {
       console.error('Error from stripe: ', error);
     }
@@ -79,7 +83,7 @@ export class StripeService {
 
   public async deleteSubscription(subscription_id: string) {
     try {
-      return this.stripe.subscriptions.cancel(subscription_id);
+      return await this.stripe.subscriptions.cancel(subscription_id);
     } catch (error) {
       console.error('Error from stripe :', error);
     }
