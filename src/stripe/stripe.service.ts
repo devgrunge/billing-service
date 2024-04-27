@@ -18,11 +18,13 @@ export class StripeService {
     customer: string,
   ): Promise<Stripe.Response<Stripe.BillingPortal.Session>> {
     try {
-      return await this.stripe.billingPortal.sessions.create({
-        customer,
+      const session = await this.stripe.billingPortal.sessions.create({
+        customer: customer,
       });
+      return session;
     } catch (error) {
       console.error('Error from stripe ', error);
+      throw error;
     }
   }
 
@@ -85,7 +87,21 @@ export class StripeService {
     try {
       return await this.stripe.subscriptions.cancel(subscription_id);
     } catch (error) {
-      console.error('Error from stripe :', error);
+      console.error('Error from stripe : ', error);
+    }
+  }
+
+  /* 
+  List all active subscriptions
+  */
+  public async listSubscriptions() {
+    try {
+      const subscription = await this.stripe.subscriptions.list();
+      console.log('Subscription ==>', subscription);
+      return subscription;
+    } catch (error) {
+      console.error('Error from stripe : ', error);
+      throw error;
     }
   }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Post, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Req } from '@nestjs/common';
 import { StripeService } from './stripe.service';
 import Stripe from 'stripe';
 
@@ -9,32 +9,41 @@ export class StripeSubscriptionController {
   @Post('subscribe')
   createSubscription(
     @Req() request,
-    @Body() priceId: string,
+    @Body() priceId: { priceId: string },
   ): Promise<Stripe.Response<Stripe.Checkout.Session> | undefined> {
-    return this.subscriptionService.createSubscription(request.user, priceId);
+    return this.subscriptionService.createSubscription(
+      request.user,
+      priceId.priceId,
+    );
   }
 
   @Post('portal-session')
   getPortal(
-    @Body() customer: string,
-  ): Promise<Stripe.Response<Stripe.BillingPortal.Session>> {
-    return this.subscriptionService.getPortal(customer);
+    @Body() customer: { customer: string },
+  ): Promise<Stripe.Response<Stripe | unknown>> {
+    return this.subscriptionService.getPortal(customer.customer);
   }
 
   @Post('edit-subscription')
   updateSubscription(
     @Body() subscription_id: string,
     order_id?: string,
-  ): Promise<Stripe.Response<Stripe.Checkout.Session> | undefined> {
-    const subscription = this.updateSubscription(subscription_id, order_id);
-
-    return subscription;
+  ): Promise<Stripe.Response<Stripe | unknown>> {
+    return this.subscriptionService.updateSubscription(
+      subscription_id,
+      order_id,
+    );
   }
 
   @Delete('cancel-subscription')
   deleteSubscription(
     @Body() subscription_id: string,
-  ): Promise<Stripe.Response<Stripe.Checkout.Session | undefined>> {
+  ): Promise<Stripe.Response<Stripe | unknown>> {
     return this.deleteSubscription(subscription_id);
+  }
+
+  @Get('list')
+  listSubscriptions(): Promise<any> {
+    return this.subscriptionService.listSubscriptions();
   }
 }
