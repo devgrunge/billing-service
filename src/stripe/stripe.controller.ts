@@ -42,8 +42,13 @@ export class StripeSubscriptionController {
     return this.deleteSubscription(subscription_id);
   }
 
-  @Get('list')
+  @Get('list-subscriptions')
   listSubscriptions(): Promise<any> {
     return this.subscriptionService.listSubscriptions();
+  }
+
+  @Get('list-products')
+  listProducts(): Promise<Stripe | unknown> {
+    return this.subscriptionService.listProducts();
   }
 }

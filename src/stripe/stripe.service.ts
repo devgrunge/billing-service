@@ -104,4 +104,13 @@ export class StripeService {
       throw error;
     }
   }
+
+  public async listProducts() {
+    try {
+      return await this.stripe.products.list();
+    } catch (error) {
+      this.logger.error(`Error from stripe: ${error}`);
+      throw error;
+    }
+  }
 }
