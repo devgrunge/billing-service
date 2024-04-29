@@ -1,13 +1,17 @@
 import { InjectStripeClient } from '@golevelup/nestjs-stripe';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CustomerMock } from './Mock/customer-mock';
 import Stripe from 'stripe';
 
 @Injectable()
 export class StripeService {
   public customerService: object;
-  constructor(@InjectStripeClient() private stripe: Stripe) {
+  constructor(
+    @InjectStripeClient() private stripe: Stripe,
+    private readonly logger: Logger,
+  ) {
     this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+    this.logger = new Logger(StripeService.name);
   }
 
   /* 
@@ -18,13 +22,11 @@ export class StripeService {
     customer: string,
   ): Promise<Stripe.Response<Stripe.BillingPortal.Session>> {
     try {
-      const session = await this.stripe.billingPortal.sessions.create({
-        customer: customer,
+      return await this.stripe.billingPortal.sessions.create({
+        customer,
       });
-      return session;
     } catch (error) {
-      console.error('Error from stripe ', error);
-      throw error;
+      this.logger.error(`Error from stripe ${error}`);
     }
   }
 
@@ -47,7 +49,7 @@ export class StripeService {
         mode: 'subscription',
       });
     } catch (error) {
-      console.error('Error from stripe ', error);
+      this.logger.error(`Error from stripe ${error}`);
     }
   }
 
@@ -67,7 +69,7 @@ export class StripeService {
         },
       });
     } catch (error) {
-      console.error('Error from stripe: ', error);
+      this.logger.error(`Error from stripe ${error}`);
     }
   }
 
@@ -87,7 +89,7 @@ export class StripeService {
     try {
       return await this.stripe.subscriptions.cancel(subscription_id);
     } catch (error) {
-      console.error('Error from stripe : ', error);
+      this.logger.error(`Error from stripe ${error}`);
     }
   }
 
@@ -96,11 +98,9 @@ export class StripeService {
   */
   public async listSubscriptions() {
     try {
-      const subscription = await this.stripe.subscriptions.list();
-      console.log('Subscription ==>', subscription);
-      return subscription;
+      return await this.stripe.subscriptions.list();
     } catch (error) {
-      console.error('Error from stripe : ', error);
+      this.logger.error(`Error from stripe ${error}`);
       throw error;
     }
   }

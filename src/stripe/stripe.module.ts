@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { StripeSubscriptionController } from './stripe.controller';
 import { StripeService } from './stripe.service';
 import { StripeModule } from '@golevelup/nestjs-stripe';
@@ -15,6 +15,6 @@ import { SubscriptionWebhookService } from './stripe-webhook.service';
     }),
   ],
   controllers: [StripeSubscriptionController],
-  providers: [StripeService, SubscriptionWebhookService],
+  providers: [StripeService, SubscriptionWebhookService, Logger],
 })
 export class SubscriptionModule {}
